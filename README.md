@@ -1,6 +1,5 @@
-# move-files
+# awesome-tools
 
-a project for move files quickly
 go release to download 
 
 ## Project setup

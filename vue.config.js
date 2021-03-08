@@ -1,34 +1,38 @@
-const path = require("path");
+const path = require('path')
 
 function resolve(dir) {
-  return path.join(__dirname, dir);
+  return path.join(__dirname, dir)
 }
 
 module.exports = {
-  publicPath: "./",
+  publicPath: './',
   devServer: {
     // can be overwritten by process.env.HOST
-    host: "0.0.0.0",
-    port: 8080
+    host: '0.0.0.0',
+    port: 8080,
+    overlay: {
+      warnings: false,
+      errors: false,
+    },
   },
   chainWebpack: config => {
     config.resolve.alias
-      .set("@", resolve("src"))
-      .set("src", resolve("src"))
-      .set("common", resolve("src/common"))
-      .set("components", resolve("src/components"));
+      .set('@', resolve('src'))
+      .set('src', resolve('src'))
+      .set('common', resolve('src/common'))
+      .set('components', resolve('src/components'))
   },
   pluginOptions: {
     electronBuilder: {
       builderOptions: {
         win: {
-          icon: "./public/app.png"
+          icon: './public/app.png',
         },
         mac: {
-          icon: "./public/app.png"
+          icon: './public/app.png',
         },
-        productName: "MoveFiles"
-      }
-    }
-  }
-};
+        productName: 'MoveFiles',
+      },
+    },
+  },
+}

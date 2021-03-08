@@ -16,6 +16,11 @@ const routers = new Router({
       name: 'GetLink',
       component: () => import('@/pages/getlink'),
     },
+    {
+      path: '/files/openlink',
+      name: 'OpenLink',
+      component: () => import('@/pages/openlink'),
+    },
   ],
 })
 

@@ -18,30 +18,32 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
   data() {
     return {
-      active: localStorage.getItem("app-route")
-        ? localStorage.getItem("app-route")
-        : "MoveFiles",
-      routers: ["MoveFiles", "GetLink"]
-    };
+      active: 'MoveFiles',
+      routers: ['MoveFiles', 'GetLink', 'OpenLink'],
+    }
+  },
+  watch: {
+    $route() {
+      this.active = this.$route.name
+    },
   },
   methods: {
     isActive(name) {
-      return this.active === name;
+      return this.active === name
     },
     select(name) {
-      if (this.active === name) return;
-      this.active = name;
-      localStorage.setItem("app-route", name);
+      if (name === 'OpenLink') return
+      if (this.$route.name === name) return
       this.$router.push({
-        name
-      });
-    }
+        name,
+      })
+    },
   },
-  created() {}
-};
+  created() {},
+}
 </script>
 
 <style>
