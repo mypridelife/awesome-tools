@@ -44,7 +44,7 @@ export default {
       this.$router.push({
         name: 'GetLink',
       })
-    }, 20000)
+    }, 25000)
   },
   deactivated() {
     clearTimeout(this.timer)
