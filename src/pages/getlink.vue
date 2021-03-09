@@ -152,7 +152,7 @@ export default {
           if (!file.name.endsWith('.png')) continue
           console.log('file', file)
 
-          const deepPath = oldPath + '/' + file.name
+          const deepPath = oldPath + '\\' + file.name
           this.totalCount += 1
 
           try {
@@ -201,13 +201,14 @@ export default {
         '&code=' +
         item.code.trim()
 
-      this.$router.push({
-        name: 'OpenLink',
-        query: {
-          link: finalLink,
-          way: way || '',
-        },
-      })
+      // this.$router.push({
+      //   name: 'OpenLink',
+      //   query: {
+      //     link: finalLink,
+      //     way: way || '',
+      //   },
+      // })
+      this.handleCopy(finalLink)
     },
     handleCopy(text) {
       clipboard.writeText(text.trim(), text)
