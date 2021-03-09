@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="page-container">
-    <div>{{ link }}===={{ code }}</div>
+    <div>{{ link }}</div>
     <webview id="baiduyun" :src="link" :preload="path"></webview>
   </div>
 </template>
@@ -15,7 +15,6 @@ export default {
   data() {
     return {
       link: '',
-      code: '',
       way: '',
       timer: '',
     }
@@ -27,16 +26,15 @@ export default {
   mounted() {
     const webview = document.querySelector('#baiduyun')
     console.log('open-mounted')
-    webview.addEventListener('did-stop-loading', () => {
+    webview.addEventListener('dom-ready', () => {
       console.log('did-stop-loading')
-      //   webview.openDevTools()
+      // webview.openDevTools()
     })
   },
   activated() {
     console.log('open-activated')
 
     this.link = this.$route.query.link
-    this.code = this.$route.query.code
     this.way = this.$route.query.way
 
     if (this.way === 'manual') return

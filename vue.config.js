@@ -31,7 +31,7 @@ module.exports = {
         mac: {
           icon: './public/app.png',
         },
-        productName: 'MoveFiles',
+        productName: 'AwesomeTools',
       },
     },
   },

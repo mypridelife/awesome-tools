@@ -12,5 +12,8 @@ yarn dev
 ### Compiles and minifies for production
 
 ```
+for mac:
 yarn electron:build
+for win:
+yarn dist
 ```

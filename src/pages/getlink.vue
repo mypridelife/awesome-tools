@@ -193,11 +193,18 @@ export default {
       }
     },
     handleOpenLink(item, way) {
+      // 转换link
+      const link = item.link.trim()
+      const finalLink =
+        'https://pan.baidu.com/share/init?surl=' +
+        link.split('/s/')[1].slice(1) +
+        '&code=' +
+        item.code.trim()
+
       this.$router.push({
         name: 'OpenLink',
         query: {
-          link: item.link.trim(),
-          code: item.code,
+          link: finalLink,
           way: way || '',
         },
       })
