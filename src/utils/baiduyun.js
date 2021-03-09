@@ -17,7 +17,7 @@
     triggerDom.click()
   }
 
-  await sleep(3)
+  await sleep(4)
   _trigger(全选)
   await sleep(1)
   _trigger(保存到网盘)
@@ -26,4 +26,5 @@
   await sleep(1)
   _trigger(确定)
   await sleep(1)
+  console.log('linkindex结束', localStorage.getItem('linkindex'))
 })()

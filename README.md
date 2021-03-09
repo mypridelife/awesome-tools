@@ -5,6 +5,7 @@ go release to download
 ## Project setup
 
 ```
+yarn
 yarn dev
 ```
 

@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="page-container">
-    <div>{{ link }}---{{ code }}</div>
+    <div>{{ link }}===={{ code }}</div>
     <webview id="baiduyun" :src="link" :preload="path"></webview>
   </div>
 </template>
@@ -13,25 +13,43 @@
 export default {
   name: '',
   data() {
-    return {}
+    return {
+      link: '',
+      code: '',
+      way: '',
+      timer: '',
+    }
   },
   watch: {},
   created() {
-    this.link = this.$route.query.link
-    this.code = this.$route.query.code
     this.path = `file:${require('path').resolve('src/utils', './baiduyun.js')}`
   },
   mounted() {
     const webview = document.querySelector('#baiduyun')
+    console.log('open-mounted')
     webview.addEventListener('did-stop-loading', () => {
       console.log('did-stop-loading')
       //   webview.openDevTools()
-      setTimeout(() => {
-        this.$router.push({
-          name: 'GetLink',
-        })
-      }, 15000)
     })
+  },
+  activated() {
+    console.log('open-activated')
+
+    this.link = this.$route.query.link
+    this.code = this.$route.query.code
+    this.way = this.$route.query.way
+
+    if (this.way === 'manual') return
+
+    this.timer = setTimeout(() => {
+      clearTimeout(this.timer)
+      this.$router.push({
+        name: 'GetLink',
+      })
+    }, 20000)
+  },
+  deactivated() {
+    clearTimeout(this.timer)
   },
   methods: {},
 }

@@ -52,8 +52,8 @@
       <sui-list>
         <sui-list-item v-for="(item, index) in finalArr" :key="item.name">
           <sui-button
-            @click="handleOpenLink(item)"
-            :primary="linkIndex === index"
+            @click="handleOpenLink(item, 'manual')"
+            :primary="linkIndex + 1 === index"
           >
             {{ index }}
           </sui-button>
@@ -107,11 +107,17 @@ export default {
     },
   },
   created() {},
+  mounted() {
+    console.log('get-mounted')
+  },
   activated() {
-    console.log('activated')
-    setTimeout(() => {
+    console.group('activated')
+    this.timer = setTimeout(() => {
       this.autoSave()
     }, 2000)
+  },
+  deactivated() {
+    clearTimeout(this.timer)
   },
   methods: {
     init() {
@@ -147,9 +153,10 @@ export default {
           console.log('file', file)
 
           const deepPath = oldPath + '/' + file.name
+          this.totalCount += 1
+
           try {
             this._getLink(deepPath, file)
-            this.totalCount += 1
           } catch (error) {
             console.log('analyze failed!!!', file, error)
             this.oldPathError = error
@@ -185,12 +192,13 @@ export default {
         console.error(err)
       }
     },
-    handleOpenLink(item) {
+    handleOpenLink(item, way) {
       this.$router.push({
         name: 'OpenLink',
         query: {
           link: item.link.trim(),
           code: item.code,
+          way: way || '',
         },
       })
     },
@@ -199,32 +207,30 @@ export default {
       console.log(clipboard.readText(text))
     },
     handleAutoSave() {
-      console.log('handleAutoSave')
       // 设置为自动
       this.$setLocal('linktask', 'processing')
 
+      console.group('手动触发自动任务开始')
       // 当前自动运行的下标
       this.autoSave('init')
     },
     autoSave(init) {
-      console.log('linktask', this.$getLocal('linktask'))
-      console.log('linkindex', this.$getLocal('linkindex'))
-
       if (this.$getLocal('linktask') !== 'processing') return
-
-      console.log('自动处理进行中')
+      console.log('1.autoSave 自动处理开始')
       // 初始情况
       if (init === 'init') {
         this.linkIndex = 0
+        console.log('2.初始情况')
       } else {
         this.linkIndex = this.$getLocal('linkindex')
           ? Number(this.$getLocal('linkindex')) + 1
           : 0
+        console.log('2.进行中情况')
       }
 
       //判断结束
       if (this.linkIndex >= this.finalArr.length) {
-        console.log('任务结束')
+        console.log('3.任务结束')
         this.isTaskFinish = true
         this.$setLocal('linktask', 'over')
         this.$rmLocal('linkindex')
@@ -233,6 +239,13 @@ export default {
 
       // 开始处理
       this.$setLocal('linkindex', this.linkIndex)
+      console.log(
+        '3.准备打开openlink，',
+        this.linkIndex,
+        this.$getLocal('linktask')
+      )
+      console.groupEnd()
+
       const item = this.finalArr[this.linkIndex]
       this.handleOpenLink(item)
     },
