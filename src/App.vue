@@ -22,7 +22,8 @@ export default {
   data() {
     return {
       active: 'MoveFiles',
-      routers: ['MoveFiles', 'GetLink', 'OpenLink'],
+      // routers: ['MoveFiles', 'GetLink', 'OpenLink'],
+      routers: ['MoveFiles', 'GetLink'],
     }
   },
   watch: {

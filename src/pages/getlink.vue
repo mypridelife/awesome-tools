@@ -11,17 +11,8 @@
             源目录
           </sui-statistic-label>
         </sui-statistic>
-        <sui-input
-          placeholder="请输入源目录"
-          class="label-input"
-          v-model="oldPath"
-        />
-        <sui-label
-          basic
-          color="red"
-          pointing="left"
-          v-show="oldPathError !== ''"
-        >
+        <sui-input placeholder="请输入源目录" class="label-input" v-model="oldPath" />
+        <sui-label basic color="red" pointing="left" v-show="oldPathError !== ''">
           {{ oldPathError }}
         </sui-label>
       </div>
@@ -31,30 +22,27 @@
         <sui-button primary @click="handleAnalyze" :loading="isDoing">
           开始处理
         </sui-button>
-        <sui-button primary @click="handleAutoSave" :loading="isDoing">
-          自动保存
-        </sui-button>
       </div>
       <div class="m-message" v-show="isFinish">
-        <sui-message>
-          <sui-message-header>处理完成</sui-message-header>
-          <p>共有{{ totalCount }}个文件，处理了{{ finalArr.length }}个</p>
-        </sui-message>
-      </div>
-      <div class="m-message" v-show="isTaskFinish">
-        <sui-message>
-          <sui-message-header>任务结束</sui-message-header>
-          <p>共有{{ linkIndex }}个文件</p>
-        </sui-message>
+        <sui-accordion exclusive styled>
+          <sui-accordion-title>
+            <sui-icon name="dropdown" />
+            共有{{ totalCount }}个文件，处理了{{ finalArr.length }}个
+          </sui-accordion-title>
+          <sui-accordion-content>
+            <sui-form>
+              <sui-form-field>
+                <textarea v-model="totalInput"></textarea>
+              </sui-form-field>
+            </sui-form>
+          </sui-accordion-content>
+        </sui-accordion>
       </div>
     </div>
     <div class="list-container">
       <sui-list>
         <sui-list-item v-for="(item, index) in finalArr" :key="item.name">
-          <sui-button
-            @click="handleOpenLink(item, 'manual')"
-            :primary="linkIndex + 1 === index"
-          >
+          <sui-button @click="handleOpenLink(item, index)" :primary="linkIndex === index">
             {{ index }}
           </sui-button>
           <sui-button @click="handleCopy(item.link)">
@@ -73,7 +61,7 @@
 const fs = require('fs')
 const jsqr = require('jsqr')
 const PNG = require('pngjs').PNG
-const { clipboard } = require('electron')
+const { clipboard, shell } = require('electron')
 
 export default {
   name: '',
@@ -96,7 +84,8 @@ export default {
       totalCount: 0,
 
       finalArr: [],
-      // 自动处理
+      totalInput: '',
+      // 点击的位置
       linkIndex: '',
     }
   },
@@ -110,15 +99,7 @@ export default {
   mounted() {
     console.log('get-mounted')
   },
-  activated() {
-    console.group('activated')
-    this.timer = setTimeout(() => {
-      this.autoSave()
-    }, 2000)
-  },
-  deactivated() {
-    clearTimeout(this.timer)
-  },
+
   methods: {
     init() {
       this.$setLocal('getLink-oldPath', this.oldPath)
@@ -168,6 +149,7 @@ export default {
       } finally {
         this.isDoing = false
         this.isFinish = true
+        this.getTotalInput()
       }
     },
     //解析文件
@@ -192,7 +174,8 @@ export default {
         console.error(err)
       }
     },
-    handleOpenLink(item, way) {
+    handleOpenLink(item, index) {
+      this.linkIndex = index
       // 转换link
       const link = item.link.trim()
       const finalLink =
@@ -201,60 +184,26 @@ export default {
         '&code=' +
         item.code.trim()
 
-      this.$router.push({
-        name: 'OpenLink',
-        query: {
-          link: finalLink,
-          way: way || '',
-        },
-      })
+      clipboard.writeText(finalLink.trim(), 'finalLink')
+
+      shell.openExternal(finalLink)
     },
     handleCopy(text) {
       clipboard.writeText(text.trim(), text)
-      console.log(clipboard.readText(text))
     },
-    handleAutoSave() {
-      // 设置为自动
-      this.$setLocal('linktask', 'processing')
-
-      console.group('手动触发自动任务开始')
-      // 当前自动运行的下标
-      this.autoSave('init')
-    },
-    autoSave(init) {
-      if (this.$getLocal('linktask') !== 'processing') return
-      console.log('1.autoSave 自动处理开始')
-      // 初始情况
-      if (init === 'init') {
-        this.linkIndex = 0
-        console.log('2.初始情况')
-      } else {
-        this.linkIndex = this.$getLocal('linkindex')
-          ? Number(this.$getLocal('linkindex')) + 1
-          : 0
-        console.log('2.进行中情况')
-      }
-
-      //判断结束
-      if (this.linkIndex >= this.finalArr.length) {
-        console.log('3.任务结束')
-        this.isTaskFinish = true
-        this.$setLocal('linktask', 'over')
-        this.$rmLocal('linkindex')
-        return
-      }
-
-      // 开始处理
-      this.$setLocal('linkindex', this.linkIndex)
-      console.log(
-        '3.准备打开openlink，',
-        this.linkIndex,
-        this.$getLocal('linktask')
-      )
-      console.groupEnd()
-
-      const item = this.finalArr[this.linkIndex]
-      this.handleOpenLink(item)
+    getTotalInput() {
+      const result = this.finalArr.map(item => {
+        const finalLink =
+          'https://pan.baidu.com/share/init?surl=' +
+          item.link
+            .trim()
+            .split('/s/')[1]
+            .slice(1) +
+          '&code=' +
+          item.code.trim()
+        return finalLink
+      })
+      this.totalInput = JSON.stringify(result)
     },
   },
 }
