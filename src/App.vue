@@ -18,33 +18,32 @@
 
 <script>
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
-      active: 'MoveFiles',
-      // routers: ['MoveFiles', 'GetLink', 'OpenLink'],
-      routers: ['MoveFiles', 'GetLink'],
-    }
+      active: "MoveFiles",
+      routers: ["MoveFiles", "GetLink"],
+    };
   },
   watch: {
     $route() {
-      this.active = this.$route.name
+      this.active = this.$route.name;
     },
   },
   methods: {
     isActive(name) {
-      return this.active === name
+      return this.active === name;
     },
     select(name) {
-      if (name === 'OpenLink') return
-      if (this.$route.name === name) return
+      if (name === "OpenLink") return;
+      if (this.$route.name === name) return;
       this.$router.push({
         name,
-      })
+      });
     },
   },
   created() {},
-}
+};
 </script>
 
 <style>
