@@ -22,6 +22,9 @@
         <sui-button primary @click="handleAnalyze" :loading="isDoing">
           开始处理
         </sui-button>
+        <sui-button @click="handleSave" style="margin-left:40px" v-if="finalArr.length > 0">
+          保存第{{ linkIndex }}个
+        </sui-button>
       </div>
       <div class="m-message" v-show="isFinish">
         <sui-accordion exclusive styled>
@@ -86,7 +89,7 @@ export default {
       finalArr: [],
       totalInput: '',
       // 点击的位置
-      linkIndex: '',
+      linkIndex: 0,
     }
   },
   computed: {},
@@ -96,9 +99,7 @@ export default {
     },
   },
   created() {},
-  mounted() {
-    console.log('get-mounted')
-  },
+  mounted() {},
 
   methods: {
     init() {
@@ -204,6 +205,12 @@ export default {
         return finalLink
       })
       this.totalInput = JSON.stringify(result)
+    },
+    handleSave() {
+      if (this.linkIndex > this.finalArr.length - 1) return
+      const item = this.finalArr[this.linkIndex]
+      this.handleOpenLink(item, this.linkIndex)
+      this.linkIndex += 1
     },
   },
 }
