@@ -1,3 +1,7 @@
+/**
+ * 百度云自动保存脚本──油猴自用
+ */
+
 ;(async function () {
   function sleep(wait) {
     return new Promise(resolve => setTimeout(resolve, wait * 1000))

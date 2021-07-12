@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 
 import './index.css'
-import './utils'
+import './utils/localVariable.js'
 
 import SuiVue from 'semantic-ui-vue'
 import 'semantic-ui-css/semantic.min.css'
